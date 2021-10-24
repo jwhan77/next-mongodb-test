@@ -1,9 +1,9 @@
-import { connectToDatabase } from "../../lib/mongodb";
+import { connectToDatabase } from "../../../lib/mongodb";
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
 
-  console.log(db);
+  const { postId } = req.query;
 
   const movies = await db
     .collection("movies")
@@ -12,7 +12,10 @@ export default async (req, res) => {
     .limit(20)
     .toArray();
 
-  res.json(movies);
+  const filtered = movies.filter((item) => item._id.toString() === postId);
+  const movie = filtered.length > 0 ? filtered[0] : {};
+
+  res.json(movie);
 };
 
 //https://www.mongodb.com/developer/how-to/nextjs-with-mongodb/
